@@ -17,6 +17,7 @@ import java.util.UUID;
 public class DoacaoController {
 
     private final DoacaoService doacaoService;
+    private final DoacaoRepository doacaoRepository;
 
     @PostMapping
     public ResponseEntity<?> criar(@Valid @RequestBody DoacaoRequest request) {
@@ -46,11 +47,19 @@ public class DoacaoController {
     
     @GetMapping("/por-doador/{doadorId}")
     public ResponseEntity<List<Doacao>> listarPorDoador(@PathVariable UUID doadorId) {
-        return ResponseEntity.ok(List.of());
+        List<Doacao> doacoes = doacaoRepository.findByDoadorId(doadorId);
+        if (doacoes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(doacoes);
     }
 
     @GetMapping("/por-campanha/{campanhaId}")
     public ResponseEntity<List<Doacao>> listarPorCampanha(@PathVariable UUID campanhaId) {
-        return ResponseEntity.ok(List.of());
+        List<Doacao> doacoes = doacaoRepository.findByCampanhaId(campanhaId);
+        if (doacoes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(doacoes);
     }
 }

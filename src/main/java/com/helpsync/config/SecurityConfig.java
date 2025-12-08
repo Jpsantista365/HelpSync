@@ -2,6 +2,7 @@ package com.helpsync.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,12 +21,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Desabilita CSRF
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**").permitAll() // Permite tudo em /api/**
-                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**").permitAll() // Libera o Swagger
-                .anyRequest().authenticated() // Exige autenticação para o resto
-            );
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/doadores").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/campanhas/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .httpBasic(basic -> {}); 
         
         return http.build();
     }
