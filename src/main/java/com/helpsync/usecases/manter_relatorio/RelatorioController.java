@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 import java.util.UUID;
@@ -60,6 +64,25 @@ public class RelatorioController {
             relatorioService.deletar(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/estatisticas/{instituicaoId}")
+    @Operation(summary = "Gera estatísticas da instituição")
+    @ApiResponse(responseCode = "200", description = "Sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RelatorioEstatisticasDTO.class)))
+    public ResponseEntity<RelatorioEstatisticasDTO> gerarEstatisticas(@PathVariable UUID instituicaoId) {
+        try {
+            System.out.println("--- CHAMANDO ESTATÍSTICAS ---");
+            RelatorioEstatisticasDTO estatisticas = relatorioService.gerarEstatisticas(instituicaoId);
+
+            System.out.println("DADOS ENCONTRADOS:");
+            System.out.println("Instituição: " + estatisticas.nomeInstituicao());
+            System.out.println("Total Valor: " + estatisticas.valorTotalArrecadado());
+
+            return ResponseEntity.ok(estatisticas);
+        } catch (RuntimeException e) {
+            System.out.println("ERRO: " + e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }

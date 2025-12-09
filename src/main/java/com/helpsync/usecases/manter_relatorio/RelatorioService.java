@@ -4,11 +4,14 @@ import com.helpsync.entity.Administrador;
 import com.helpsync.entity.Instituicao;
 import com.helpsync.entity.Relatorio;
 import com.helpsync.usecases.manter_administrador.AdministradorRepository;
+import com.helpsync.usecases.manter_campanha.CampanhaRepository;
 import com.helpsync.usecases.manter_instituicao.InstituicaoRepository;
+import com.helpsync.usecases.realizar_doacao.DoacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,6 +24,9 @@ public class RelatorioService {
     private final RelatorioRepository relatorioRepository;
     private final AdministradorRepository administradorRepository;
     private final InstituicaoRepository instituicaoRepository; 
+
+    private final CampanhaRepository campanhaRepository;
+    private final DoacaoRepository doacaoRepository;
 
     public RelatorioResponse criar(RelatorioRequest request) {
         Administrador admin = administradorRepository.findById(request.administradorId())
@@ -77,5 +83,25 @@ public class RelatorioService {
             throw new RuntimeException("Relatório não encontrado com ID: " + id);
         }
         relatorioRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public RelatorioEstatisticasDTO gerarEstatisticas(UUID instituicaoId) {
+        Instituicao instituicao = instituicaoRepository.findById(instituicaoId)
+                .orElseThrow(() -> new RuntimeException("Instituição não encontrada com ID: " + instituicaoId));
+        long totalCampanhas = campanhaRepository.countByInstituicaoId(instituicaoId);
+        long totalDoacoes = doacaoRepository.contarDoacoesPorInstituicao(instituicaoId);
+        BigDecimal valorTotal = doacaoRepository.somarDoacoesPorInstituicao(instituicaoId);
+
+        if (valorTotal == null) {
+            valorTotal = BigDecimal.ZERO;
+        }
+
+        return new RelatorioEstatisticasDTO(
+                instituicao.getNome(),
+                totalCampanhas,
+                totalDoacoes,
+                valorTotal
+        );
     }
 }

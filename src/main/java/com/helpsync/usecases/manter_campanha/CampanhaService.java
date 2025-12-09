@@ -26,6 +26,11 @@ public class CampanhaService {
         campanha.setTitulo(request.titulo());
         campanha.setDescricao(request.descricao());
         campanha.setMetaFinanceira(request.metaFinanceira());
+        
+        campanha.setDataInicio(request.dataInicio());
+        campanha.setDataFim(request.dataFim());
+        campanha.setAtiva(true);
+
         campanha.setInstituicao(instituicao); 
 
         Campanha salva = campanhaRepository.save(campanha);
@@ -55,6 +60,10 @@ public class CampanhaService {
         campanha.setTitulo(request.titulo());
         campanha.setDescricao(request.descricao());
         campanha.setMetaFinanceira(request.metaFinanceira());
+        
+        campanha.setDataInicio(request.dataInicio());
+        campanha.setDataFim(request.dataFim());
+
         campanha.setInstituicao(instituicao);
 
         Campanha atualizada = campanhaRepository.save(campanha);

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -16,6 +17,9 @@ import java.util.List;
 @Entity
 @Table(name = "campanha")
 public class Campanha extends BaseEntity {
+
+    @Column(name = "valor_arrecadado", precision = 10, scale = 2)
+    private BigDecimal valorArrecadado = BigDecimal.ZERO;
     
     @Column(nullable = false)
     private String titulo;
@@ -26,7 +30,6 @@ public class Campanha extends BaseEntity {
     @Column(name = "meta_financeira", precision = 10, scale = 2)
     private BigDecimal metaFinanceira;
 
-    // Novos campos adicionados
     @Column(name = "data_inicio")
     private LocalDateTime dataInicio;
 
@@ -43,7 +46,6 @@ public class Campanha extends BaseEntity {
     @OneToMany(mappedBy = "campanha", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Doacao> doacoes;
     
-    // Construtor auxiliar atualizado
     public Campanha(String titulo, String descricao, BigDecimal metaFinanceira, LocalDateTime dataInicio, LocalDateTime dataFim) {
         this.titulo = titulo;
         this.descricao = descricao;

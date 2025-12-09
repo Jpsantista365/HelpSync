@@ -1,7 +1,6 @@
 package com.helpsync.usecases.manter_campanha;
 
 import com.helpsync.entity.Campanha;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,6 +10,10 @@ public record CampanhaResponse(
         String titulo,
         String descricao,
         BigDecimal metaFinanceira,
+        BigDecimal valorArrecadado,
+        LocalDateTime dataInicio, 
+        LocalDateTime dataFim,    
+        Boolean ativa,            
         InstituicaoInfo instituicao,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -31,6 +34,10 @@ public record CampanhaResponse(
                 campanha.getTitulo(),
                 campanha.getDescricao(),
                 campanha.getMetaFinanceira(),
+                campanha.getValorArrecadado(),
+                campanha.getDataInicio(), 
+                campanha.getDataFim(),    
+                campanha.getAtiva(),      
                 instituicaoInfo,
                 campanha.getCreatedAt(),
                 campanha.getUpdatedAt()
