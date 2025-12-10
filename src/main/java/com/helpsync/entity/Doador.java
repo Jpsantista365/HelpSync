@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import java.util.List;
 
 @Data
@@ -27,7 +28,7 @@ public class Doador extends BaseEntity {
     @Column(nullable = false)
     private String senha;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "doador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Doacao> doacoes;
-
 }

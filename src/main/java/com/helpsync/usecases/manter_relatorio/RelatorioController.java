@@ -77,8 +77,8 @@ public class RelatorioController {
             RelatorioEstatisticasDTO estatisticas = relatorioService.gerarEstatisticas(instituicaoId);
 
             System.out.println("DADOS ENCONTRADOS:");
-            System.out.println("Instituição: " + estatisticas.nomeInstituicao());
-            System.out.println("Total Valor: " + estatisticas.valorTotalArrecadado());
+            System.out.println("Instituição: " + estatisticas.getNomeInstituicao());
+            System.out.println("Total Valor: " + estatisticas.getValorTotalArrecadado());
 
             return ResponseEntity.ok(estatisticas);
         } catch (RuntimeException e) {

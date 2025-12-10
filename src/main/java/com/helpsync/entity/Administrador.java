@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -25,9 +26,11 @@ public class Administrador extends BaseEntity {
     @Column(nullable = false)
     private String senha;
     
+    @ToString.Exclude 
     @OneToMany(mappedBy = "administrador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FundoMunicipal> fundosMunicipais;
     
+    @ToString.Exclude
     @OneToMany(mappedBy = "administrador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Relatorio> relatorios;
     
