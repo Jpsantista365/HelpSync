@@ -55,11 +55,15 @@ public class InstituicaoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable UUID id) {
+    public ResponseEntity<?> deletar(@PathVariable UUID id) {
         try {
             instituicaoService.deletar(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
+            // Se o erro for de validação da nossa regra de negócio, devolvemos 400 com a mensagem.
+            if (e.getMessage().contains("Não é possível excluir")) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
             return ResponseEntity.notFound().build();
         }
     }

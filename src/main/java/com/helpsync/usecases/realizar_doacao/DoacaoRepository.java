@@ -21,4 +21,6 @@ public interface DoacaoRepository extends JpaRepository<Doacao, UUID> {
 
     @Query("SELECT COUNT(d) FROM Doacao d WHERE d.campanha.instituicao.id = :instituicaoId")
     long contarDoacoesPorInstituicao(@Param("instituicaoId") UUID instituicaoId);
+
+    boolean existsByCampanhaId(UUID campanhaId);
 }

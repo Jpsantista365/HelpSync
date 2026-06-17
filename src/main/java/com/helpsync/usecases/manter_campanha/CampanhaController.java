@@ -55,11 +55,15 @@ public class CampanhaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable UUID id) {
+    public ResponseEntity<?> deletar(@PathVariable UUID id) {
         try {
             campanhaService.deletar(id);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
+            // Se o erro foi a nossa trava de segurança, repassa a mensagem para o front-end
+            if (e.getMessage().contains("Não é possível excluir")) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
             return ResponseEntity.notFound().build();
         }
     }

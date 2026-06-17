@@ -3,6 +3,8 @@ package com.helpsync.usecases.manter_campanha;
 import com.helpsync.entity.Campanha;
 import com.helpsync.entity.Instituicao;
 import com.helpsync.usecases.manter_instituicao.InstituicaoRepository;
+import com.helpsync.usecases.realizar_doacao.DoacaoRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +23,18 @@ public class CampanhaService {
 
     public CampanhaResponse criar(CampanhaRequest request) {
         Instituicao instituicao = instituicaoRepository.findById(request.instituicaoId())
-                .orElseThrow(() -> new RuntimeException("Instituição não encontrada com ID: " + request.instituicaoId()));
+                .orElseThrow(
+                        () -> new RuntimeException("Instituição não encontrada com ID: " + request.instituicaoId()));
         Campanha campanha = new Campanha();
         campanha.setTitulo(request.titulo());
         campanha.setDescricao(request.descricao());
         campanha.setMetaFinanceira(request.metaFinanceira());
-        
+
         campanha.setDataInicio(request.dataInicio());
         campanha.setDataFim(request.dataFim());
         campanha.setAtiva(true);
 
-        campanha.setInstituicao(instituicao); 
+        campanha.setInstituicao(instituicao);
 
         Campanha salva = campanhaRepository.save(campanha);
         return CampanhaResponse.fromEntity(salva);
@@ -56,11 +59,12 @@ public class CampanhaService {
         Campanha campanha = campanhaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Campanha não encontrada com ID: " + id));
         Instituicao instituicao = instituicaoRepository.findById(request.instituicaoId())
-                .orElseThrow(() -> new RuntimeException("Instituição não encontrada com ID: " + request.instituicaoId()));
+                .orElseThrow(
+                        () -> new RuntimeException("Instituição não encontrada com ID: " + request.instituicaoId()));
         campanha.setTitulo(request.titulo());
         campanha.setDescricao(request.descricao());
         campanha.setMetaFinanceira(request.metaFinanceira());
-        
+
         campanha.setDataInicio(request.dataInicio());
         campanha.setDataFim(request.dataFim());
 
@@ -69,11 +73,18 @@ public class CampanhaService {
         Campanha atualizada = campanhaRepository.save(campanha);
         return CampanhaResponse.fromEntity(atualizada);
     }
-
+    
+    private final DoacaoRepository doacaoRepository;
     public void deletar(UUID id) {
-        if (!campanhaRepository.existsById(id)) {
-            throw new RuntimeException("Campanha não encontrada com ID: " + id);
-        }
-        campanhaRepository.deleteById(id);
+    if (!campanhaRepository.existsById(id)) {
+        throw new RuntimeException("Campanha não encontrada com ID: " + id);
+    }
+
+    // REGRA DE NEGÓCIO: Bloqueia a exclusão se a campanha tiver doações registradas
+    if (doacaoRepository.existsByCampanhaId(id)) {
+        throw new RuntimeException("Erro: Não é possível excluir esta campanha pois ela já possui doações vinculadas ao seu histórico.");
+    }
+
+    campanhaRepository.deleteById(id);
     }
 }

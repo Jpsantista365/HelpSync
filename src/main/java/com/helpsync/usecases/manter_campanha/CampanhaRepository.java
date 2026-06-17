@@ -12,4 +12,6 @@ public interface CampanhaRepository extends JpaRepository<Campanha, UUID> {
     List<Campanha> findByInstituicaoId(UUID instituicaoId);
     
     long countByInstituicaoId(UUID instituicaoId);
+
+    boolean existsByInstituicaoId(UUID instituicaoId);
 }

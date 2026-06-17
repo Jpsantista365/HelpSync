@@ -2,7 +2,8 @@ package com.helpsync.usecases.manter_instituicao;
 
 import com.helpsync.entity.FundoMunicipal;
 import com.helpsync.entity.Instituicao;
-import com.helpsync.usecases.manter_fundoMunicipal.FundoMunicipalRepository; // Importando
+import com.helpsync.usecases.manter_fundoMunicipal.FundoMunicipalRepository;
+import com.helpsync.usecases.manter_campanha.CampanhaRepository; // Importação adicionada
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ public class InstituicaoService {
 
     private final InstituicaoRepository instituicaoRepository;
     private final FundoMunicipalRepository fundoMunicipalRepository; 
+    private final CampanhaRepository campanhaRepository; // Injeção do repositório adicionada
 
     public InstituicaoResponse criar(InstituicaoRequest request) {
         if (instituicaoRepository.existsByCnpj(request.cnpj())) {
@@ -77,6 +79,12 @@ public class InstituicaoService {
         if (!instituicaoRepository.existsById(id)) {
             throw new RuntimeException("Instituição não encontrada com ID: " + id);
         }
+
+        // REGRA DE NEGÓCIO: Bloquear exclusão se houver campanhas vinculadas
+        if (campanhaRepository.existsByInstituicaoId(id)) {
+            throw new RuntimeException("Erro: Não é possível excluir esta instituição pois existem campanhas vinculadas a ela.");
+        }
+
         instituicaoRepository.deleteById(id);
     }
 }
